@@ -43,11 +43,12 @@ namespace SqlBulkCopyTool
                 GROUP BY schema_Name, name
                 ORDER BY dependency_level DESC, schema_Name, name";
 
-            var reader = cmd.ExecuteReader();
-            var names = new List<string>(100);
-
-            while (reader.Read()) names.Add(reader.GetString(0));
-            return names.AsReadOnly();
+            using (var reader = cmd.ExecuteReader())
+            {
+                var names = new List<string>(100);
+                while (reader.Read()) names.Add(reader.GetString(0));
+                return names.AsReadOnly();
+            }
         }
 
         private ReadOnlyCollection<string> FilterHangfireTables(IEnumerable<string> tables)
